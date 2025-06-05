@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang ="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOOD MEAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+
+</head>
+<body>
+  <div>
+    <div class="logo">MOOD MEAL</div>
+    <div class="tagline"><span class="text"></span></div>
+
+     <div class="auth-buttons">
+      <button class="signup-btn" onclick="openForm('signup')">Sign Up</button>
+      <button class="login-btn" onclick="openForm('login')">Login</button>
+    </div>
+
+    <form class="form-popup" id="signupForm">
+      <h2>Sign Up</h2>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" minlength="6" required>
+      <div class="form-actions">
+        <button type="submit">Register</button>
+        <button type="button" onclick="closeForm()">Cancel</button>
+      </div>
+    </form>
+
+    <form class="form-popup" id="loginForm">
+      <h2>Login</h2>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <div class="form-actions">
+        <button type="submit">Login</button>
+        <button type="button" onclick="closeForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+body {
+      background-color: #fdf6f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family:'Special Gothic Expanded One', sans-serif;
+      flex-direction: column;
+    }
+
+    .logo {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ff6600;
+      position: relative;
+      text-align: center;
+    }
+
+    .logo::after {
+      content: '🙂🍲';
+      font-size: 2.5rem;
+      position: absolute;
+      top: 0;
+      right: -7rem;
+    }
+    .tagline {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1.2rem;
+      color: #444;
+      font-style: italic;
+    }
+
+    .auth-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 15px;
+}
+
+.signup-btn,
+.login-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background 0.3s;
+}
+
+.signup-btn {
+  background-color: #ff6600;
+  color: white;
+}
+
+.signup-btn:hover {
+  background-color: #e65c00;
+}
+
+.login-btn {
+  background-color: #444;
+  color: white;
+}
+
+.login-btn:hover {
+  background-color: #222;
+}
+
+.form-popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 2px solid #ccc;
+  padding: 25px;
+  z-index: 10;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  font-family: 'Roboto', sans-serif;
+  width: 300px;
+}
+
+.form-popup h2 {
+  margin-bottom: 15px;
+  color: #ff6600;
+}
+
+.form-popup input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-actions button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.form-actions button[type="submit"] {
+  background-color: #ff6600;
+  color: white;
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: #e65c00;
+}
+
+.form-actions button[type="button"] {
+  background-color: #ccc;
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: #aaa;
+}
+
+.animated-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ff6600;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transition: transform 0.1s ease;
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    opacity: 0.6;
+  }
+}
