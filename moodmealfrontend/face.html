@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MoodMeal+ Facial Mood Detection</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    video { border: 2px solid #ccc; border-radius: 10px; margin-top: 20px; }
+    #result { font-size: 20px; font-weight: bold; margin-top: 20px; }
+  </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      const video = document.getElementById('video');
+      const resultBox = document.getElementById('result');
+
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri('/models/tiny_face_detector_model'),
+        faceapi.nets.faceExpressionNet.loadFromUri('/models/face_expression_model')
+      ]).then(startVideo);
+
+      function startVideo() {
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(stream => {
+            video.srcObject = stream;
+          })
+          .catch(err => console.error("Camera access denied or error:", err));
+      }
+
+      video.addEventListener('play', () => {
+        const canvas = faceapi.createCanvasFromMedia(video);
+        document.body.append(canvas);
+        const displaySize = { width: video.width, height: video.height };
+        faceapi.matchDimensions(canvas, displaySize);
+
+        setInterval(async () => {
+          const detections = await faceapi
+            .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+            .withFaceExpressions();
+
+          const resized = faceapi.resizeResults(detections, displaySize);
+          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+          faceapi.draw.drawDetections(canvas, resized);
+
+          if (detections.length > 0) {
+            const expressions = detections[0].expressions;
+            const mood = Object.keys(expressions).reduce((a, b) =>
+              expressions[a] > expressions[b] ? a : b
+            );
+            resultBox.textContent = `Detected mood: ${mood}`;
+
+            fetch(`http://localhost:8081/api/meal?mood=${mood}`)
+              .then(res => res.text())
+              .then(meal => {
+                resultBox.textContent = `Detected mood: ${mood} → Suggested meal: ${meal}`;
+              });
+          } else {
+            resultBox.textContent = "Face not visible. Look at the camera.";
+          }
+        }, 3000);
+      });
+    });
+    function startVoiceInput() {
+  const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  const voiceText = document.getElementById('voice-text');
+  voiceText.textContent = "🎙️ Listening...";
+
+  recognition.start();
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    voiceText.textContent = `You said: "${transcript}"`;
+
+    // Call backend API with voice input
+    fetch(`http://localhost:8081/api/detect-mood?text=${encodeURIComponent(transcript)}`)
+      .then(res => res.text())
+      .then(mood => {
+        voiceText.textContent += ` → Detected mood: ${mood}`;
+        
+        // Get meal for that mood
+        fetch(`http://localhost:8081/api/meal?mood=${mood}`)
+          .then(res => res.text())
+          .then(meal => {
+            voiceText.textContent += ` → Suggested meal: ${meal}`;
+          });
+      });
+  };
+
+  recognition.onerror = (e) => {
+    voiceText.textContent = "❌ Voice recognition error: " + e.error;
+  };
+}
+
+  </script>
+</head>
+<body>
+  <button onclick="startVoiceInput()">🎤 Speak Mood</button>
+<div id="voice-text" style="margin-top: 10px;"></div>
+
+  <h1>😊 Mood Detection via Facial Expression</h1>
+  <video id="video" width="480" height="360" autoplay muted></video>
+  <div id="result">Waiting for detection...</div>
+</body>
+</html>
