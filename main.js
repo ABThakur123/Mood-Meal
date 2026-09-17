@@ -54,7 +54,7 @@ signupForm.addEventListener("submit", async function (e) {
   const password = signupForm.querySelector("#password").value;
   const errorMessage = document.getElementById("signup-error");
 
-  const response = await fetch("http://localhost:8081/api/auth/register", {
+  const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -85,7 +85,7 @@ loginForm.addEventListener("submit", async function (e) {
   const password = loginForm.querySelector("#password").value;
   const errorMessage = document.getElementById("login-error");
 
-  const response = await fetch("http://localhost:8081/api/auth/login", {
+  const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
