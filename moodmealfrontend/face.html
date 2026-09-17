@@ -49,7 +49,7 @@
             );
             resultBox.textContent = `Detected mood: ${mood}`;
 
-            fetch(`http://localhost:8081/api/meal?mood=${mood}`)
+            fetch(`https://mood-meal-ppvx.onrender.com/api/meal-by-mood?mood=${mood}`)
               .then(res => res.text())
               .then(meal => {
                 resultBox.textContent = `Detected mood: ${mood} → Suggested meal: ${meal}`;
