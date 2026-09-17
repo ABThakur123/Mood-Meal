@@ -71,7 +71,9 @@
   .back-link:hover { color: #ff6600; }
 </style>
 <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+ 
 <script defer>
+ 
 window.addEventListener('DOMContentLoaded', () => {
   const video = document.getElementById('video');
   const resultBox = document.getElementById('result');
@@ -149,6 +151,40 @@ function startVoiceInput() {
     voiceText.textContent = "Voice recognition error: " + e.error;
   };
 }
+ let selectedRating = 0;
+document.querySelectorAll('#stars span').forEach(star => {
+  star.addEventListener('click', () => {
+    selectedRating = parseInt(star.dataset.value);
+    document.querySelectorAll('#stars span').forEach((s, i) => {
+      s.textContent = i < selectedRating ? '★' : '☆';
+    });
+  });
+});
+let selectedRating = 0;
+document.querySelectorAll('#stars span').forEach(star => {
+  star.addEventListener('click', () => {
+    selectedRating = parseInt(star.dataset.value);
+    document.querySelectorAll('#stars span').forEach((s, i) => {
+      s.textContent = i < selectedRating ? '★' : '☆';
+    });
+  });
+});
+
+function submitFeedback() {
+  const comment = document.getElementById('feedbackText').value;
+  const msg = document.getElementById('feedbackMsg');
+  if (selectedRating === 0) {
+    msg.textContent = "Please select a star rating first.";
+    return;
+  }
+  fetch('https://mood-meal-ppvx.onrender.com/api/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating: selectedRating, comment })
+  })
+    .then(res => res.text())
+    .then(text => { msg.textContent = text; });
+}
 </script>
 </head>
 <body>
@@ -163,8 +199,18 @@ function startVoiceInput() {
   <div class="card">
     <video id="video" width="480" height="360" autoplay muted></video>
     <div id="result">Waiting for detection...</div>
-  </div>
 
+   <div class="card">
+  <p style="font-weight:500; margin-bottom:10px;">Rate this suggestion</p>
+  <div id="stars" style="font-size:28px; cursor:pointer; margin-bottom:10px;">
+    <span data-value="1">☆</span><span data-value="2">☆</span><span data-value="3">☆</span><span data-value="4">☆</span><span data-value="5">☆</span>
+  </div>
+  <textarea id="feedbackText" placeholder="Any comments?" style="width:100%; max-width:400px; padding:8px; border-radius:8px; border:1px solid #ccc; font-family:inherit;" rows="2"></textarea><br><br>
+  <button onclick="submitFeedback()">Submit feedback</button>
+  <p id="feedbackMsg" style="margin-top:8px; font-size:14px; color:#5f5e5a;"></p>
+</div>
+   
+  </div>
   <a href="index.html" class="back-link">← Back to login</a>
 </body>
 </html>
