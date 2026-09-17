@@ -52,13 +52,12 @@ signupForm.addEventListener("submit", async function (e) {
   const username = signupForm.querySelector("#username").value;
   const email = signupForm.querySelector("#email").value;
   const password = signupForm.querySelector("#password").value;
+  const errorMessage = document.getElementById("signup-error");
   const passwordRules = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{6,12}$/;
 if (!passwordRules.test(password)) {
   errorMessage.innerText = "Password must be 6–12 characters and include an uppercase letter, a lowercase letter, a number, and a special character.";
   return;
 }
-  const errorMessage = document.getElementById("signup-error");
-
   const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/register", {
     method: "POST",
     headers: {
