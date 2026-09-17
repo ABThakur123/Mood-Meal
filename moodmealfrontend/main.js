@@ -72,6 +72,9 @@ signupForm.addEventListener("submit", async function (e) {
   if (resultText.includes("successful")) {
     signupForm.reset();
     closeForm();
+  window.location.href = "mood.html";
+}
+});
   }
 });
 
@@ -103,7 +106,7 @@ loginForm.addEventListener("submit", async function (e) {
     localStorage.setItem("userEmail", email);
     loginForm.reset();
     closeForm();
-    window.location.href = "dashboard.html"; 
+    window.location.href = "mood.html"; 
   }
 });
 
