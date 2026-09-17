@@ -75,9 +75,6 @@ signupForm.addEventListener("submit", async function (e) {
   window.location.href = "mood.html";
 }
 });
-  }
-});
-
 
 const loginForm = document.getElementById("loginForm");
 loginForm.insertAdjacentHTML("beforeend", '<p id="login-error" style="color: red; font-weight: bold;"></p>');
