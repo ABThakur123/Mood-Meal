@@ -76,13 +76,13 @@
     voiceText.textContent = `You said: "${transcript}"`;
 
     // Call backend API with voice input
-    fetch(`http://localhost:8081/api/detect-mood?text=${encodeURIComponent(transcript)}`)
+    fetch(`https://mood-meal-ppvx.onrender.com/api/detect-mood?text=${encodeURIComponent(transcript)}`)
       .then(res => res.text())
       .then(mood => {
         voiceText.textContent += ` → Detected mood: ${mood}`;
         
         // Get meal for that mood
-        fetch(`http://localhost:8081/api/meal?mood=${mood}`)
+        fetch(`https://mood-meal-ppvx.onrender.com/api/meal?mood=${mood}`)
           .then(res => res.text())
           .then(meal => {
             voiceText.textContent += ` → Suggested meal: ${meal}`;
