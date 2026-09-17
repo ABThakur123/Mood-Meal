@@ -160,15 +160,6 @@ document.querySelectorAll('#stars span').forEach(star => {
     });
   });
 });
-function submitFeedback() {
-  const comment = document.getElementById('feedbackText').value;
-  const msg = document.getElementById('feedbackMsg');
-  if (selectedRating === 0) {
-    msg.textContent = "Please select a star rating first.";
-    return;
-  }
-  fetch('https://mood-meal-ppvx.onrender.com/api/feedback', {
-    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ rating: selectedRating, comment })
   })
