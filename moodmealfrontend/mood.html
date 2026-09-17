@@ -1,101 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>MoodMeal+ Facial Mood Detection</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; }
-    video { border: 2px solid #ccc; border-radius: 10px; margin-top: 20px; }
-    #result { font-size: 20px; font-weight: bold; margin-top: 20px; }
-  </style>
-  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-  <script defer>
-    window.addEventListener('DOMContentLoaded', () => {
-      const video = document.getElementById('video');
-      const resultBox = document.getElementById('result');
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoodMeal+ Facial Mood Detection</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    background: #f2d8c3;
+    margin: 0;
+    min-height: 100vh;
+    padding: 40px 20px;
+    color: #2c2c2a;
+  }
+  h1 {
+    font-family: 'Special Gothic Expanded One', sans-serif;
+    color: #ff6600;
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+  .subtitle { color: #5f5e5a; margin-bottom: 24px; font-size: 14px; }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 520px;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  video {
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 4px;
+  }
+  #result {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 14px;
+    min-height: 24px;
+  }
+  button {
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  button:hover { background: #e65c00; transform: scale(1.03); }
+  #voice-text {
+    margin-top: 12px;
+    font-size: 15px;
+    min-height: 22px;
+    color: #444441;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 24px;
+    color: #999;
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .back-link:hover { color: #ff6600; }
+</style>
+<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script defer>
+window.addEventListener('DOMContentLoaded', () => {
+  const video = document.getElementById('video');
+  const resultBox = document.getElementById('result');
 
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri('/models/tiny_face_detector_model'),
-        faceapi.nets.faceExpressionNet.loadFromUri('/models/face_expression_model')
-      ]).then(startVideo);
+  Promise.all([
+    faceapi.nets.tinyFaceDetector.loadFromUri('/models/tiny_face_detector_model'),
+    faceapi.nets.faceExpressionNet.loadFromUri('/models/face_expression_model')
+  ]).then(startVideo);
 
-      function startVideo() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(stream => {
-            video.srcObject = stream;
-          })
-          .catch(err => console.error("Camera access denied or error:", err));
-      }
-
-      video.addEventListener('play', () => {
-        const canvas = faceapi.createCanvasFromMedia(video);
-        document.body.append(canvas);
-        const displaySize = { width: video.width, height: video.height };
-        faceapi.matchDimensions(canvas, displaySize);
-
-        setInterval(async () => {
-          const detections = await faceapi
-            .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-            .withFaceExpressions();
-
-          const resized = faceapi.resizeResults(detections, displaySize);
-          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-          faceapi.draw.drawDetections(canvas, resized);
-
-          if (detections.length > 0) {
-            const expressions = detections[0].expressions;
-            const mood = Object.keys(expressions).reduce((a, b) =>
-              expressions[a] > expressions[b] ? a : b
-            );
-            resultBox.textContent = `Detected mood: ${mood}`;
-
-            fetch(`https://mood-meal-ppvx.onrender.com/api/meal-by-mood?mood=${mood}`)
-              .then(res => res.text())
-              .then(meal => {
-                resultBox.textContent = `Detected mood: ${mood} → Suggested meal: ${meal}`;
-              });
-          } else {
-            resultBox.textContent = "Face not visible. Look at the camera.";
-          }
-        }, 3000);
+  function startVideo() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => {
+        resultBox.textContent = "Camera access denied. Please allow camera permissions.";
       });
-    });
-    function startVoiceInput() {
+  }
+
+  video.addEventListener('play', () => {
+    const canvas = faceapi.createCanvasFromMedia(video);
+    document.body.append(canvas);
+    canvas.style.display = "none";
+    const displaySize = { width: video.width, height: video.height };
+    faceapi.matchDimensions(canvas, displaySize);
+
+    setInterval(async () => {
+      const detections = await faceapi
+        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+        .withFaceExpressions();
+
+      const resized = faceapi.resizeResults(detections, displaySize);
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+
+      if (detections.length > 0) {
+        const expressions = detections[0].expressions;
+        const mood = Object.keys(expressions).reduce((a, b) =>
+          expressions[a] > expressions[b] ? a : b
+        );
+        resultBox.textContent = `Detecting... mood: ${mood}`;
+
+        fetch(`https://mood-meal-ppvx.onrender.com/api/meal-by-mood?mood=${mood}`)
+          .then(res => res.text())
+          .then(meal => {
+            resultBox.textContent = `Mood: ${mood} → ${meal}`;
+          });
+      } else {
+        resultBox.textContent = "Face not visible. Look at the camera.";
+      }
+    }, 3000);
+  });
+});
+
+function startVoiceInput() {
   const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
   const voiceText = document.getElementById('voice-text');
-  voiceText.textContent = "🎙️ Listening...";
+  voiceText.textContent = "🎤 Listening...";
 
   recognition.start();
 
   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
-    voiceText.textContent = `You said: "${transcript}"`;
+    voiceText.textContent = `You said: "${transcript}" — thinking...`;
 
-// Call backend API with voice input
-fetch(`https://mood-meal-ppvx.onrender.com/api/suggest-meal?text=${encodeURIComponent(transcript)}`)
-  .then(res => res.text())
-  .then(result => {
-    voiceText.textContent += ` → ${result}`;
-  });
+    fetch(`https://mood-meal-ppvx.onrender.com/api/suggest-meal?text=${encodeURIComponent(transcript)}`)
+      .then(res => res.text())
+      .then(result => {
+        voiceText.textContent = `You said: "${transcript}" → ${result}`;
+      });
   };
 
   recognition.onerror = (e) => {
-    voiceText.textContent = "❌ Voice recognition error: " + e.error;
+    voiceText.textContent = "Voice recognition error: " + e.error;
   };
 }
-
-  </script>
+</script>
 </head>
 <body>
-  <button onclick="startVoiceInput()">🎤 Speak Mood</button>
-<div id="voice-text" style="margin-top: 10px;"></div>
+  <h1>😊 Mood Meal</h1>
+  <p class="subtitle">Tell us how you feel — with your voice or your face</p>
 
-  <h1>😊 Mood Detection via Facial Expression</h1>
-  <video id="video" width="480" height="360" autoplay muted></video>
-  <div id="result">Waiting for detection...</div>
+  <div class="card">
+    <button onclick="startVoiceInput()">🎤 Speak your mood</button>
+    <div id="voice-text"></div>
+  </div>
+
+  <div class="card">
+    <video id="video" width="480" height="360" autoplay muted></video>
+    <div id="result">Waiting for detection...</div>
+  </div>
+
+  <a href="index.html" class="back-link">← Back to login</a>
 </body>
 </html>
