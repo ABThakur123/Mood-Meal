@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moodmeal.service.TextEmotionService;
-
+import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class TextEmotionController {
@@ -27,20 +27,20 @@ public class TextEmotionController {
 
     // ✅ New: For face-based mood detection (used by face.html)
     @GetMapping("/meal-by-mood")
-    public ResponseEntity<String> suggestMealByMood(@RequestParam String mood) {
-        String meal;
-        switch (mood.toLowerCase()) {
-            case "happy": meal = "Ice Cream 🍦"; break;
-            case "sad": meal = "Warm Soup 🍜"; break;
-            case "angry": meal = "Dark Chocolate 🍫"; break;
-            case "neutral": meal = "Fruit Salad 🥗"; break;
-            case "fearful": meal = "Chamomile Tea ☕"; break;
-            case "disgusted": meal = "Lemon Water 🍋"; break;
-            case "surprised": meal = "Cupcake 🧁"; break;
-            case "stressed": meal = "Herbal Tea 🍵"; break;
-            default: meal = "Fresh Juice 🍹"; break;
-        }
+private final Map<String, List<String>> mealOptions = Map.of(
+    "happy", List.of("Ice Cream 🍦", "Pizza Party 🍕", "Fruit Bowl 🍓", "Milkshake 🥤"),
+    "sad", List.of("Chocolate Therapy 🍫", "Warm Soup 🍲", "Mac and Cheese 🧀", "Hot Cocoa ☕"),
+    "angry", List.of("Dark Chocolate 🍫", "Spicy Noodles 🌶️", "Cold Lemonade 🍋"),
+    "neutral", List.of("Fruit Salad 🥗", "Sandwich 🥪", "Yogurt Bowl 🍨"),
+    "fearful", List.of("Chamomile Tea 🍵", "Warm Milk 🥛", "Comfort Soup 🍲"),
+    "disgusted", List.of("Lemon Water 🍋", "Fresh Juice 🧃", "Mint Tea 🍃"),
+    "surprised", List.of("Cupcake 🧁", "Popcorn 🍿", "Fruit Punch 🍹"),
+    "stressed", List.of("Green Tea 🍵", "Herbal Tea and Soup 🍵", "Warm Oats 🥣")
+);
 
-        return ResponseEntity.ok(meal);
-    }
+public ResponseEntity<String> suggestMealByMood(@RequestParam String mood) {
+    List<String> options = mealOptions.getOrDefault(mood.toLowerCase(), List.of("Comfort Food 🍜"));
+    String meal = options.get(new Random().nextInt(options.size()));
+    return ResponseEntity.ok(meal);
 }
+
