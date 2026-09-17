@@ -26,7 +26,7 @@ public class TextEmotionController {
     }
 
     // ✅ New: For face-based mood detection (used by face.html)
-    @GetMapping("/meal")
+    @GetMapping("/meal-by-mood")
     public ResponseEntity<String> suggestMealByMood(@RequestParam String mood) {
         String meal;
         switch (mood.toLowerCase()) {
