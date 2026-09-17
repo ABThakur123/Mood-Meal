@@ -75,19 +75,12 @@
     const transcript = event.results[0][0].transcript;
     voiceText.textContent = `You said: "${transcript}"`;
 
-    // Call backend API with voice input
-    fetch(`https://mood-meal-ppvx.onrender.com/api/detect-mood?text=${encodeURIComponent(transcript)}`)
-      .then(res => res.text())
-      .then(mood => {
-        voiceText.textContent += ` → Detected mood: ${mood}`;
-        
-        // Get meal for that mood
-        fetch(`https://mood-meal-ppvx.onrender.com/api/meal?mood=${mood}`)
-          .then(res => res.text())
-          .then(meal => {
-            voiceText.textContent += ` → Suggested meal: ${meal}`;
-          });
-      });
+// Call backend API with voice input
+fetch(`https://mood-meal-ppvx.onrender.com/api/suggest-meal?text=${encodeURIComponent(transcript)}`)
+  .then(res => res.text())
+  .then(result => {
+    voiceText.textContent += ` → ${result}`;
+  });
   };
 
   recognition.onerror = (e) => {
