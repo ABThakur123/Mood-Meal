@@ -160,16 +160,6 @@ document.querySelectorAll('#stars span').forEach(star => {
     });
   });
 });
-let selectedRating = 0;
-document.querySelectorAll('#stars span').forEach(star => {
-  star.addEventListener('click', () => {
-    selectedRating = parseInt(star.dataset.value);
-    document.querySelectorAll('#stars span').forEach((s, i) => {
-      s.textContent = i < selectedRating ? '★' : '☆';
-    });
-  });
-});
-
 function submitFeedback() {
   const comment = document.getElementById('feedbackText').value;
   const msg = document.getElementById('feedbackMsg');
