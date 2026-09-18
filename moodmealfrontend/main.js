@@ -58,6 +58,12 @@ if (!passwordRules.test(password)) {
   errorMessage.innerText = "Password must be 6–12 characters and include an uppercase letter, a lowercase letter, a number, and a special character.";
   return;
 }
+ const submitBtn = signupForm.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+errorMessage.style.color = "#888";
+errorMessage.innerText = "Connecting... this can take up to a minute if the server has been idle.";
+
+try {
   const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/register", {
     method: "POST",
     headers: {
@@ -71,12 +77,14 @@ if (!passwordRules.test(password)) {
   });
 
   const resultText = await response.text();
+  errorMessage.style.color = "red";
   errorMessage.innerText = resultText;
-
-  if (resultText.includes("successful")) {
-    signupForm.reset();
-    closeForm();
-  window.location.href = "mood.html";
+  if (resultText.includes("successful")) { signupForm.reset(); closeForm(); window.location.href = "mood.html"; }
+} catch (err) {
+  errorMessage.style.color = "red";
+  errorMessage.innerText = "Couldn't reach the server. Please try again in a moment.";
+} finally {
+  submitBtn.disabled = false;
 }
 });
 
