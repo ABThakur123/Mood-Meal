@@ -152,11 +152,13 @@ function startVoiceInput() {
   };
 }
  let selectedRating = 0;
-document.querySelectorAll('#stars span').forEach(star => {
-  star.addEventListener('click', () => {
-    selectedRating = parseInt(star.dataset.value);
-    document.querySelectorAll('#stars span').forEach((s, i) => {
-      s.textContent = i < selectedRating ? '★' : '☆';
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#stars span').forEach(star => {
+    star.addEventListener('click', () => {
+      selectedRating = parseInt(star.dataset.value);
+      document.querySelectorAll('#stars span').forEach((s, i) => {
+        s.textContent = i < selectedRating ? '★' : '☆';
+      });
     });
   });
 });
