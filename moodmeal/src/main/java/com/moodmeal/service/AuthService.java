@@ -1,15 +1,16 @@
 package com.moodmeal.service;
 
-import java.util.concurrent.ConcurrentHashMap;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.moodmeal.model.User;
+import com.moodmeal.repository.UserRepository;
 
 @Service
 public class AuthService {
 
-    private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+    @Autowired
+    private UserRepository userRepository;
 
     public String register(User user) {
 
@@ -17,18 +18,18 @@ public class AuthService {
             return "Registration failed: email and password are required";
         }
 
-        if (users.containsKey(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             return "Registration failed: an account with this email already exists";
         }
 
-        users.put(user.getEmail(), user);
+        userRepository.save(user);
 
         return "Registration successful";
     }
 
     public String login(User user) {
 
-        User existing = users.get(user.getEmail());
+        User existing = userRepository.findByEmail(user.getEmail()).orElse(null);
 
         if (existing == null ||
             !existing.getPassword().equals(user.getPassword())) {
