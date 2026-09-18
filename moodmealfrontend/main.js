@@ -61,8 +61,7 @@ if (!passwordRules.test(password)) {
  const submitBtn = signupForm.querySelector('button[type="submit"]');
 submitBtn.disabled = true;
 errorMessage.style.color = "#888";
-errorMessage.innerText = "Connecting... this can take up to a minute if the server has been idle.";
-
+errorMessage.innerHTML = '<span class="loading-spinner"></span>Connecting... this can take up to a minute if the server has been idle.';
 try {
   const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/register", {
     method: "POST",
@@ -97,6 +96,12 @@ loginForm.addEventListener("submit", async function (e) {
   const password = loginForm.querySelector("#password").value;
   const errorMessage = document.getElementById("login-error");
 
+ const submitBtn = loginForm.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+errorMessage.style.color = "#888";
+errorMessage.innerHTML = '<span class="loading-spinner"></span>Connecting... this can take up to a minute if the server has been idle.';
+
+try {
   const response = await fetch("https://mood-meal-ppvx.onrender.com/api/auth/login", {
     method: "POST",
     headers: {
@@ -109,14 +114,21 @@ loginForm.addEventListener("submit", async function (e) {
   });
 
   const resultText = await response.text();
+  errorMessage.style.color = "red";
   errorMessage.innerText = resultText;
 
   if (resultText.includes("successful")) {
     localStorage.setItem("userEmail", email);
     loginForm.reset();
     closeForm();
-    window.location.href = "mood.html"; 
+    window.location.href = "mood.html";
   }
+} catch (err) {
+  errorMessage.style.color = "red";
+  errorMessage.innerText = "Couldn't reach the server. Please try again in a moment.";
+} finally {
+  submitBtn.disabled = false;
+}
 });
 
 
