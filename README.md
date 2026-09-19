@@ -5,7 +5,6 @@ A mood-based meal recommendation app. Tell it how you're feeling — by voice or
 **🔗 Live site:** https://mood-meal-1.onrender.com
 **🔗 Backend API:** https://mood-meal-ppvx.onrender.com
 
-Built as a collaborative project with [ShubhanginiJadhav](https://github.com/ShubhanginiJadhav).
 
 ## Features
 
