@@ -55,6 +55,21 @@
     transition: transform 0.15s ease, background 0.15s ease;
   }
   button:hover { background: #e65c00; transform: scale(1.03); }
+   .loading-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #ff6600;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
   #voice-text {
     margin-top: 12px;
     font-size: 15px;
