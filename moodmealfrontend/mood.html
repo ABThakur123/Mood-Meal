@@ -126,12 +126,15 @@ window.addEventListener('DOMContentLoaded', () => {
         const mood = Object.keys(expressions).reduce((a, b) =>
           expressions[a] > expressions[b] ? a : b
         );
-        resultBox.textContent = `Detecting... mood: ${mood}`;
+               resultBox.innerHTML = `<span class="loading-spinner"></span>Detecting mood: ${mood}... getting your meal`;
 
         fetch(`https://mood-meal-ppvx.onrender.com/api/meal-by-mood?mood=${mood}`)
           .then(res => res.text())
           .then(meal => {
             resultBox.textContent = `Mood: ${mood} → ${meal}`;
+          })
+          .catch(() => {
+            resultBox.textContent = "Couldn't reach the server. Retrying shortly...";
           });
       } else {
         resultBox.textContent = "Face not visible. Look at the camera.";
@@ -151,14 +154,17 @@ function startVoiceInput() {
 
   recognition.start();
 
-  recognition.onresult = (event) => {
+   recognition.onresult = (event) => {
     const transcript = event.results[0][0].transcript;
-    voiceText.textContent = `You said: "${transcript}" — thinking...`;
+    voiceText.innerHTML = `You said: "${transcript}" <span class="loading-spinner"></span>Thinking... this can take a moment if the server has been idle.`;
 
     fetch(`https://mood-meal-ppvx.onrender.com/api/suggest-meal?text=${encodeURIComponent(transcript)}`)
       .then(res => res.text())
       .then(result => {
         voiceText.textContent = `You said: "${transcript}" → ${result}`;
+      })
+      .catch(() => {
+        voiceText.textContent = `You said: "${transcript}" — couldn't reach the server. Please try again.`;
       });
   };
 
@@ -184,13 +190,17 @@ document.addEventListener('DOMContentLoaded', () => {
     msg.textContent = "Please select a star rating first.";
     return;
   }
+  msg.innerHTML = '<span class="loading-spinner"></span>Sending... this can take a moment if the server has been idle.';
   fetch('https://mood-meal-ppvx.onrender.com/api/feedback', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ rating: selectedRating, comment })
   })
     .then(res => res.text())
-    .then(text => { msg.textContent = text; });
+    .then(text => { msg.textContent = text; })
+    .catch(() => {
+      msg.textContent = "Couldn't reach the server. Please try again.";
+    });
 }
 </script>
 </head>
